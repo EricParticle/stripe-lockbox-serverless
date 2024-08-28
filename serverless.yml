@@ -1,0 +1,22 @@
+service: stripe-lockbox-serverless
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  environment:
+    STRIPE_WEBHOOK_SECRET: ${file(.env.json):STRIPE_WEBHOOK_SECRET}
+    STRIPE_SECRET_KEY: ${file(.env.json):STRIPE_SECRET_KEY}
+    PARTICLE_API_KEY: ${file(.env.json):PARTICLE_API_KEY}
+
+functions:
+  stripeWebhook:
+    handler: webhooks/stripe/index.handler
+    description: Stripe webhook callback function
+    events:
+      - http:
+          path: /stripe-webhook
+          method: post
+          cors: true
